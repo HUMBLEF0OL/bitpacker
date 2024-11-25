@@ -1,0 +1,24 @@
+{
+  "name": "compression-tool",
+  "version": "1.0.0",
+  "description": "A file compression tool",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HUMBLEF0OL/compression-tool.git"
+  },
+  "keywords": [
+    "compression-tool",
+    "Huffman",
+    "Coding"
+  ],
+  "author": "HUMBLEF0OL",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HUMBLEF0OL/compression-tool/issues"
+  },
+  "homepage": "https://github.com/HUMBLEF0OL/compression-tool#readme"
+}

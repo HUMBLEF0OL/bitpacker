@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/HUMBLEF0OL/compression-tool/issues"
   },
-  "homepage": "https://github.com/HUMBLEF0OL/compression-tool#readme"
+  "homepage": "https://github.com/HUMBLEF0OL/compression-tool#readme",
+  "dependencies": {
+    "msgpack5": "^6.0.2"
+  }
 }

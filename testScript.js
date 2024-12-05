@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { performance } = require('perf_hooks');
-const { frequencyAnalysis, generatePriorityQueue } = require('./util');
+const { frequencyAnalysis, generatePriorityQueue, extractTextFromPdf } = require('./util');
 const { generateHuffmanTree, generateCodes, encodeData, serializeTree, serializeTreeToBinary, saveCompressedOutput } = require('./compress');
 const { decodeData, deserializeTree, deserializedBinaryToTree, saveDecodedOutput } = require('./decompress');
 class TestScript {
@@ -68,10 +68,18 @@ class TestScript {
 
     async runTest(fileName) {
         const filePath = path.join(this.testDir, fileName);
+        const fileExtension = path.extname(filePath);
         console.log(`\ntesting ${filePath}...`);
 
         try {
-            const originalData = fs.readFileSync(filePath, 'utf-8');
+            let originalData;
+            if (fileExtension === '.pdf') {
+                originalData = await extractTextFromPdf(filePath);
+                console.log(originalData);
+            } else {
+                originalData = fs.readFileSync(filePath, 'utf-8');
+            }
+            // const originalData = fs.readFileSync(filePath, 'utf-8');
             const originalSize = this.getFileSize(filePath);
 
             // Compression process

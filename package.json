@@ -23,6 +23,7 @@
   "homepage": "https://github.com/HUMBLEF0OL/compression-tool#readme",
   "dependencies": {
     "commander": "^12.1.0",
-    "msgpack5": "^6.0.2"
+    "msgpack5": "^6.0.2",
+    "pdf-parse": "^1.1.1"
   }
 }

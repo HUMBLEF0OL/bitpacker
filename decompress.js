@@ -70,24 +70,33 @@ const deserializeTree = (tree) => {
     return root;
 }
 
-const saveDecodedOutput = async (filePath, data) => {
-    const fileName = path.basename(filePath, path.extname(filePath));
-    const fileExtension = path.extname(filePath);
-    const dirPath = path.join(__dirname, 'output', fileName);
-    if (!fs.existsSync(dirPath)) {
-        fs.mkdirSync(dirPath, { recursive: true });
-    }
-    const decodedFile = path.join(dirPath, `decoded${fileExtension}`);
+
+const saveDecodedOutput = async (fileName, data, outputDir) => {
     try {
+        // Create the directory if it doesn't exist
+        if (!fs.existsSync(outputDir)) {
+            fs.mkdirSync(outputDir, { recursive: true });
+        }
+
+        // Define the decoded file path
+        const decodedFile = path.join(outputDir, fileName);
+
+        // Write the decoded data to the file
         await fs.promises.writeFile(decodedFile, data);
+
+        // Fetch file size and return it along with the file path
         const fileSize = fs.statSync(decodedFile).size;
 
-        console.log("decoded file size: ", fileSize);
+        console.log(`✅ Decoded file saved at: ${decodedFile}`);
+        console.log(`📏 Decoded file size: ${fileSize} bytes`);
+
         return fileSize;
     } catch (err) {
-        console.error('Error saving files:', err.message);
+        console.error('❌ Error saving decoded file:', err.message);
+        throw err; // Re-throw for upstream error handling
     }
-}
+};
+
 
 module.exports = {
     decodeData,

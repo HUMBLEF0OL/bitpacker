@@ -107,42 +107,49 @@ const serializeTreeToBinary = (root) => {
 };
 
 
-const saveCompressedOutput = async (filePath, data, metaInfo) => {
-    const fileName = path.basename(filePath, path.extname(filePath));
-    const dirPath = path.join(__dirname, 'output', fileName);
+// Function to save compressed output and return combined size
+const saveCompressedOutput = async (inputFilePath, compressedData, metaInfo, outputDir) => {
+    const fileName = path.basename(inputFilePath, path.extname(inputFilePath));
+    const dirPath = path.join(outputDir, fileName);
+
+    // Create output directory if it doesn't exist
     if (!fs.existsSync(dirPath)) {
         fs.mkdirSync(dirPath, { recursive: true });
     }
-    const compressed = path.join(dirPath, 'encoded.bin');
-    const metaFile = path.join(dirPath, 'metaData.bin');
-    const binaryData = binaryStringToBuffer(data);
+
+    // Define file paths
+    const encodedFilePath = path.join(dirPath, 'encoded.bin');
+    const metaFilePath = path.join(dirPath, 'metaData.bin');
+    const binaryData = binaryStringToBuffer(compressedData);
 
     try {
-        await fs.promises.writeFile(metaFile, metaInfo);
-        console.log('Metadata saved successfully');
+        // Save meta information
+        await fs.promises.writeFile(metaFilePath, metaInfo);
+        console.log('✅ Metadata saved successfully');
 
-        await fs.promises.writeFile(compressed, binaryData);
-        console.log('Compressed data saved successfully');
+        // Save compressed binary data
+        await fs.promises.writeFile(encodedFilePath, binaryData);
+        console.log('✅ Compressed data saved successfully');
 
-        const compressedStats = fs.statSync(compressed);
-        const metaStats = fs.statSync(metaFile);
-
+        // Calculate file sizes
+        const compressedStats = fs.statSync(encodedFilePath);
+        const metaStats = fs.statSync(metaFilePath);
         const totalSize = compressedStats.size + metaStats.size;
 
-        console.log(`Combined size of encoded.bin and metaData.bin: ${totalSize} bytes`);
+        console.log(`🔍 Combined size of encoded.bin and metaData.bin: ${(totalSize / 1024).toFixed(2)} KB`);
         return totalSize;
     } catch (err) {
-        console.error('Error saving files:', err.message);
+        console.error('❌ Error saving files:', err.message);
         throw err;
     }
-}
-// Convert a binary string (e.g., "101010") to a Buffer
+};
+
+// Helper function: Convert a binary string (e.g., "101010") to a Buffer
 const binaryStringToBuffer = (binaryString) => {
     const byteArray = [];
     for (let i = 0; i < binaryString.length; i += 8) {
-        // Take 8 bits at a time and convert to a number
-        const byte = binaryString.slice(i, i + 8);
-        byteArray.push(parseInt(byte, 2));
+        const byte = binaryString.slice(i, i + 8); // Take 8 bits at a time
+        byteArray.push(parseInt(byte, 2)); // Convert binary to a number
     }
     return Buffer.from(byteArray);
 };

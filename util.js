@@ -33,6 +33,7 @@ function extractTextFromPdf(filePath) {
     });
 }
 
+// helper for determining the correct file size
 
 
 module.exports = {

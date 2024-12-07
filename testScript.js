@@ -1,37 +1,55 @@
 const fs = require('fs');
 const path = require('path');
 const { performance } = require('perf_hooks');
-const { frequencyAnalysis, generatePriorityQueue, extractTextFromPdf } = require('./util');
-const { generateHuffmanTree, generateCodes, encodeData, serializeTree, serializeTreeToBinary, saveCompressedOutput } = require('./compress');
-const { decodeData, deserializeTree, deserializedBinaryToTree, saveDecodedOutput } = require('./decompress');
+const {
+    frequencyAnalysis,
+    generatePriorityQueue,
+    extractTextFromPdf,
+} = require('./util');
+const {
+    generateHuffmanTree,
+    generateCodes,
+    encodeData,
+    serializeTreeToBinary,
+    saveCompressedOutput,
+} = require('./compress');
+const {
+    decodeData,
+    deserializedBinaryToTree,
+    saveDecodedOutput,
+} = require('./decompress');
+
 class TestScript {
-    constructor(testDir = './test') {
+    constructor(testDir = './test', outputDir = './output') {
         this.testDir = testDir;
-        this.outputDir = path.join(__dirname, 'output')
-        this.report = []
+        this.outputDir = outputDir;
+        this.report = [];
     }
 
+    // Retrieve files in the test directory
     getTestFiles() {
         try {
             const files = fs.readdirSync(this.testDir);
-            console.log("files are: ", files);
+            console.log("📂 Files found in test directory:", files);
             return files;
         } catch (err) {
-            console.log("failed to read files from directory: ", this.testDir);
+            console.error("❌ Failed to read files from test directory:", err.message);
             process.exit(1);
         }
     }
 
+    // Get file size for a given file path
     getFileSize(filePath) {
         try {
             const stats = fs.statSync(filePath);
             return stats.size;
         } catch (err) {
-            console.error("Failed to get file size:", err.message);
+            console.error("❌ Failed to get file size:", err.message);
             return 0;
         }
     }
 
+    // Generate a single report entry
     generateReportEntry(fileName, originalSize, compressedSize, compressionTime, decompressionTime, accuracy) {
         const compressionRatio = (originalSize / compressedSize).toFixed(2);
         const savings = (((originalSize - compressedSize) / originalSize) * 100).toFixed(2);
@@ -48,38 +66,22 @@ class TestScript {
         };
     }
 
-    generateCompressedFile(fileName) {
-        const data = fs.readFileSync(filePath, 'utf-8');
-        // preprocessing of data
-        const frequency = frequencyAnalysis(data);
-        const heap = generatePriorityQueue(frequency);
-        const tree = generateHuffmanTree(heap);
-        const codes = generateCodes(tree);
-        const compressed = encodeData(data, codes);
-        const binarySerializedTree = serializeTreeToBinary(tree);
-        saveCompressedOutput(fileName, compressed, binarySerializedTree);
-    }
-
-    generateOriginalFile(encodedData, tree) {
-        const binaryDeserializedTree = deserializedBinaryToTree(tree);
-        const decodeFromBuffer = decodeData(encodedData, binaryDeserializedTree);
-
-    }
-
+    // Core function to test compression and decompression for a single file
     async runTest(fileName) {
         const filePath = path.join(this.testDir, fileName);
         const fileExtension = path.extname(filePath);
-        console.log(`\ntesting ${filePath}...`);
+        console.log(`\n🚀 Running test for file: ${filePath}`);
 
         try {
             let originalData;
+            // Extract text-based content, PDF requires special handling
             if (fileExtension === '.pdf') {
                 originalData = await extractTextFromPdf(filePath);
-                console.log(originalData);
+                if (!originalData) throw new Error("Failed to extract text from PDF");
             } else {
                 originalData = fs.readFileSync(filePath, 'utf-8');
             }
-            // const originalData = fs.readFileSync(filePath, 'utf-8');
+
             const originalSize = this.getFileSize(filePath);
 
             // Compression process
@@ -90,22 +92,31 @@ class TestScript {
             const codes = generateCodes(tree);
             const compressedData = encodeData(originalData, codes);
             const binarySerializedTree = serializeTreeToBinary(tree);
-            const compressedSize = await saveCompressedOutput(fileName, compressedData, binarySerializedTree);
-            const compressionEnd = performance.now();
 
+            const compressedSize = await saveCompressedOutput(
+                fileName,
+                compressedData,
+                binarySerializedTree,
+                `${this.outputDir}/compress`
+            );
+            const compressionEnd = performance.now();
 
             // Decompression process
             const decompressionStart = performance.now();
             const deserializedTree = deserializedBinaryToTree(binarySerializedTree);
             const decompressedData = decodeData(compressedData, deserializedTree);
-            const decompressedSize = await saveDecodedOutput(fileName, decompressedData);
+
+            const decompressedSize = await saveDecodedOutput(
+                fileName,
+                decompressedData,
+                `${this.outputDir}/decompress`
+            );
             const decompressionEnd = performance.now();
 
-
-            // Accuracy Check
+            // Verify accuracy
             const isAccurate = originalData === decompressedData;
 
-            // Generate Metrics Report
+            // Record metrics
             const reportEntry = this.generateReportEntry(
                 fileName,
                 originalSize,
@@ -116,10 +127,9 @@ class TestScript {
             );
             this.report.push(reportEntry);
 
-            console.log("✔️ Test completed:", reportEntry);
-            this.generateReport();
+            console.log("✔️ Test completed successfully:", reportEntry);
         } catch (err) {
-            console.log(`❌ Compression Failed: ${err.message}`);
+            console.error(`❌ Test failed for ${fileName}:`, err.message);
             this.report.push({
                 fileName,
                 error: err.message,
@@ -127,16 +137,14 @@ class TestScript {
         }
     }
 
+    // Run tests on all files in the test directory
     runAllTests() {
-        console.log("Starting Compression Algorithm....\n");
+        console.log("\n📊 Starting Compression and Decompression Tests...");
         const testFiles = this.getTestFiles();
-        testFiles.forEach(file => {
-            this.runTest(file);
-        })
-
-        // this.generateReport();
+        testFiles.forEach((file) => this.runTest(file));
     }
 
+    // Save the metrics report to a file
     generateReport() {
         const reportPath = path.join(this.outputDir, 'compression_metrics.json');
         try {
@@ -144,12 +152,16 @@ class TestScript {
                 fs.mkdirSync(this.outputDir, { recursive: true });
             }
             fs.writeFileSync(reportPath, JSON.stringify(this.report, null, 2), 'utf-8');
-            console.log("\n📊 Metrics Report saved at:", reportPath);
+            console.log("\n📈 Metrics report saved to:", reportPath);
         } catch (err) {
             console.error("❌ Failed to save metrics report:", err.message);
         }
     }
 }
 
-const tool = new TestScript();
-tool.runAllTests();
+// Initialize and run the tests
+(async () => {
+    const testScript = new TestScript('./test', './output');
+    await testScript.runAllTests();
+    testScript.generateReport();
+})();

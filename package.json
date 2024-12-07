@@ -1,19 +1,26 @@
 {
-  "name": "compression-tool",
+  "name": "bitpacker",
   "version": "1.0.0",
-  "description": "A file compression tool",
+  "description": "A file compression tool that uses Huffman coding",
   "main": "index.js",
+  "bin": {
+    "bitpacker": "./index.js"
+  },
   "scripts": {
-    "test": "node testScript.js"
+    "test": "node testScript.js",
+    "compress": "bitpacker compress",
+    "decompress": "bitpacker decompress"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HUMBLEF0OL/compression-tool.git"
   },
   "keywords": [
-    "compression-tool",
+    "compression",
     "Huffman",
-    "Coding"
+    "coding",
+    "file-compression",
+    "bitpacker"
   ],
   "author": "HUMBLEF0OL",
   "license": "ISC",
@@ -25,5 +32,7 @@
     "commander": "^12.1.0",
     "msgpack5": "^6.0.2",
     "pdf-parse": "^1.1.1"
-  }
+  },
+  "devDependencies": {},
+  "optionalDependencies": {}
 }

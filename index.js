@@ -36,7 +36,6 @@ function compressFile(inputPath, outputDir) {
 
         const decodedData = decodeData(compressedData, tree);
         const serializedTree = serializeTreeToBinary(tree, fileExtension);
-        console.log("decoded data in compression: ", serializedTree);
 
         // Save compressed file
         const fileName = path.basename(inputPath, path.extname(inputPath));
@@ -67,8 +66,6 @@ const decompressFile = async (inputDir, outputDir) => {
         const compressedData = bufferToBinaryString(compressedDataBuffer);
         const { tree, fileExtension } = deserializedBinaryToTree(serializedTree);
         const decodedData = decodeData(compressedData, tree);
-        console.log("decoded data in compression: ", tree);
-        console.log("decoded data in compression: ", decodedData);
 
         // Save the decoded output
         const outputFileName = `decoded${fileExtension}`;
@@ -89,6 +86,7 @@ program
 // Compress Command
 program
     .command('compress')
+    .alias('c')
     .description('Compress a text file')
     .argument('<inputFile>', 'Input file to compress')
     .option('-o, --output <directory>', 'Output directory for compressed files', './output')
@@ -100,12 +98,17 @@ program
 // Decompress Command
 program
     .command('decompress')
+    .alias('d')
     .description('Decompress a compressed file')
-    .argument('<inputDir>', 'Directory containing encoded.bin and metaData.bin')
+    .argument('[inputDir]', 'Directory containing encoded.bin and metaData.bin') // Optional argument
     .option('-o, --output <directory>', 'Output directory for decompressed file', './output')
     .action((inputDir, options) => {
+        // If no inputDir is provided, default to the current directory
+        const inputDirectory = path.resolve(inputDir || './');
         const outputDir = path.resolve(options.output);
-        decompressFile(path.resolve(inputDir), outputDir);
+        decompressFile(inputDirectory, outputDir);
     });
+
+
 
 program.parse(process.argv);

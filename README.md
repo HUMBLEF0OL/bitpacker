@@ -1,6 +1,6 @@
 
 
-# Huffman Compression Algorithm
+# Bitpacker - Huffman Compression Tool
 
 This project implements a custom Huffman Compression Algorithm, designed to compress text-based files such as `.txt`, `.json`, `.docx`, and `.pdf`. It uses the Huffman coding technique to reduce the size of the text by encoding characters based on their frequency of occurrence in the source data.
 
@@ -17,7 +17,7 @@ This project implements a custom Huffman Compression Algorithm, designed to comp
 - `.json`
 - `.docx`
 - `.pdf` (with consideration that only the text is compressed; embedded images are not compressed)
-  
+
 **Note**: The algorithm is designed for text-based formats. When handling PDFs containing images, only the text portion will be compressed.
 
 ## Setup Instructions
@@ -46,22 +46,31 @@ Before running the project, ensure you have the following dependencies installed
    npm install
    ```
 
-### Usage
+## Usage
 
-1. Place the file(s) you want to compress in the `./test` directory. Supported formats include `.txt`, `.json`, `.docx`, and `.pdf` (for text extraction only).
+### Command-line Tool
 
-2. Run the compression process:
+1. **Compress** a file:
+
+   Use the `bitpacker` command with the `compress` option to compress a file.
+
    ```bash
-   node index.js
+   bitpacker compress <inputFile> [--output <outputDir>]
    ```
 
-   This will start the compression algorithm, process each file in the `./test` directory, and generate compressed output files in the `./output` directory.
+   - `<inputFile>`: The file to be compressed (e.g., `sample.txt`).
+   - `[--output <outputDir>]`: The directory to store the compressed files (defaults to `./output`).
 
-3. Check the `./output` directory for:
-   - Compressed files (`encoded.bin`)
-   - Metadata files (`metaData.bin`)
+2. **Decompress** a file:
 
-4. To decompress the file, simply use the `decode` function provided in the project.
+   To decompress a previously compressed file, use the `decompress` command.
+
+   ```bash
+   bitpacker decompress <inputDir> [--output <outputDir>]
+   ```
+
+   - `<inputDir>`: The directory containing the compressed file (`encoded.bin` and `metaData.bin`).
+   - `[--output <outputDir>]`: The directory to store the decompressed files (defaults to `./output`).
 
 ### Report Generation
 

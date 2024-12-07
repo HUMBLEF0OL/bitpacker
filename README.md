@@ -33,12 +33,12 @@ Before running the project, ensure you have the following dependencies installed
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/HUMBLEF0OL/huffman-compression.git
+   git clone https://github.com/HUMBLEF0OL/bitpacker.git
    ```
 
 2. Navigate to the project directory:
    ```bash
-   cd huffman-compression
+   cd bitpacker
    ```
 
 3. Install the required dependencies:

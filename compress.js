@@ -2,6 +2,7 @@ const msgpack5 = require("msgpack5")();
 const path = require('path');
 const fs = require('fs');
 const Node = require("./Node");
+const { formatFileSize } = require("./util");
 
 const generateHuffmanTree = (heap) => {
     while (heap.length > 1) {
@@ -143,7 +144,7 @@ const saveCompressedOutput = async (inputFilePath, compressedData, metaInfo, out
         const metaStats = fs.statSync(metaFilePath);
         const totalSize = compressedStats.size + metaStats.size;
 
-        console.log(`🔍 Combined size of encoded.bin and metaData.bin: ${(totalSize / 1024).toFixed(2)} KB`);
+        console.log(`🔍 Combined size of encoded.bin and metaData.bin: ${formatFileSize(totalSize)}`);
         return totalSize;
     } catch (err) {
         console.error('❌ Error saving files:', err.message);

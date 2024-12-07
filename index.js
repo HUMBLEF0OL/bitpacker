@@ -3,7 +3,7 @@
 const { Command } = require('commander');
 const fs = require('fs');
 const path = require('path');
-const { frequencyAnalysis, generatePriorityQueue } = require('./util');
+const { frequencyAnalysis, generatePriorityQueue, calculateCompressionMetrics } = require('./util');
 const {
     generateHuffmanTree,
     generateCodes,
@@ -21,11 +21,18 @@ const {
 const program = new Command();
 
 // Function to compress a file
-function compressFile(inputPath, outputDir) {
+const compressFile = async (inputPath, outputDir) => {
+    const startTime = performance.now(); // Start time to calculate the compression time
+
     try {
         console.log(`\nCompressing file: ${inputPath}...`);
+
+        // Read the input file
         const data = fs.readFileSync(inputPath, 'utf-8');
-        const fileExtension = path.extname(inputPath)
+        const fileExtension = path.extname(inputPath);
+
+        // Record the original file size
+        const originalSize = fs.statSync(inputPath).size; // In bytes
 
         // Generate Huffman Tree and codes
         const frequency = frequencyAnalysis(data);
@@ -34,14 +41,26 @@ function compressFile(inputPath, outputDir) {
         const codes = generateCodes(tree);
         const compressedData = encodeData(data, codes);
 
-        const decodedData = decodeData(compressedData, tree);
         const serializedTree = serializeTreeToBinary(tree, fileExtension);
+
+
 
         // Save compressed file
         const fileName = path.basename(inputPath, path.extname(inputPath));
-        saveCompressedOutput(inputPath, compressedData, serializedTree, outputDir);
+        const compressedSize = await saveCompressedOutput(inputPath, compressedData, serializedTree, outputDir);
 
-        console.log(`✅ Compression successful. Files saved to: ${outputDir}`);
+        // Calculate compression metrics
+        const metrics = calculateCompressionMetrics(originalSize, compressedSize, startTime);
+
+        // Log compression metrics
+        console.log(`✅ Compression successful.`);
+        console.log(`Files saved to: ${outputDir}`);
+        console.log(`Original File Size: ${metrics.originalSize}`);
+        console.log(`Compressed File Size: ${metrics.compressedSize}`);
+        console.log(`Compression Ratio: ${metrics.compressionRatio}`);
+        console.log(`Storage Saving: ${metrics.savings}`);
+        console.log(`Time Taken: ${metrics.timeTaken}`);
+
     } catch (err) {
         console.error(`❌ Compression failed: ${err.message}`);
     }

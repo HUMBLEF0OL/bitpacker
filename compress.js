@@ -78,7 +78,7 @@ const serializeTree = (tree) => {
     return map.get(tree);
 }
 
-const serializeTreeToBinary = (root) => {
+const serializeTreeToBinary = (root, fileExtension) => {
     const serializeNode = (node) => {
         if (!node) return null;
 
@@ -101,8 +101,15 @@ const serializeTreeToBinary = (root) => {
     };
 
     const serializedTree = serializeNode(root);
-    const result = msgpack5.encode(serializedTree);
-    // console.log("binary serialized: ", typeof result);
+    // Include the file extension
+    const metadata = {
+        tree: serializedTree,
+        fileExtension: fileExtension,
+    };
+
+    // Encode using msgpack
+    const result = msgpack5.encode(metadata);
+
     return result;
 };
 

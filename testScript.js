@@ -91,19 +91,19 @@ class TestScript {
             const tree = generateHuffmanTree(heap);
             const codes = generateCodes(tree);
             const compressedData = encodeData(originalData, codes);
-            const binarySerializedTree = serializeTreeToBinary(tree);
+            const metaData = serializeTreeToBinary(tree, fileExtension);
 
             const compressedSize = await saveCompressedOutput(
                 fileName,
                 compressedData,
-                binarySerializedTree,
+                metaData,
                 `${this.outputDir}/compress`
             );
             const compressionEnd = performance.now();
 
             // Decompression process
             const decompressionStart = performance.now();
-            const deserializedTree = deserializedBinaryToTree(binarySerializedTree);
+            const { tree: deserializedTree, fileExtension: extension } = deserializedBinaryToTree(metaData);
             const decompressedData = decodeData(compressedData, deserializedTree);
 
             const decompressedSize = await saveDecodedOutput(

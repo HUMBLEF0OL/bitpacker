@@ -3,6 +3,14 @@ const path = require('path');
 const fs = require('fs');
 const Node = require("./Node");
 
+const bufferToBinaryString = (buffer) => {
+    return buffer
+        .toString('binary') // Convert to binary string
+        .split('')
+        .map((char) => char.charCodeAt(0).toString(2).padStart(8, '0')) // Each char -> binary
+        .join('');
+};
+
 const decodeData = (encoded, tree) => {
     let decodedData = '';
     let currentNode = tree;
@@ -44,8 +52,14 @@ const deserializedBinaryToTree = (buffer) => {
         );
     };
 
-    const decodedTree = msgpack5.decode(buffer);
-    return deserializeNode(decodedTree);
+    const metaData = msgpack5.decode(buffer);
+    const tree = deserializeNode(metaData.tree);
+    const fileExtension = metaData.fileExtension;
+
+    return {
+        tree,
+        fileExtension
+    }
 };
 
 
@@ -99,6 +113,7 @@ const saveDecodedOutput = async (fileName, data, outputDir) => {
 
 
 module.exports = {
+    bufferToBinaryString,
     decodeData,
     deserializeTree,
     deserializedBinaryToTree,

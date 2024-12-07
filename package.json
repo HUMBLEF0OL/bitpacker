@@ -1,15 +1,15 @@
 {
-  "name": "bitpacker",
+  "name": "filesqueeze",
   "version": "1.0.0",
   "description": "A file compression tool that uses Huffman coding",
   "main": "index.js",
   "bin": {
-    "bitpacker": "./index.js"
+    "filesqueeze": "./index.js"
   },
   "scripts": {
     "test": "node testScript.js",
-    "compress": "bitpacker compress",
-    "decompress": "bitpacker decompress"
+    "compress": "filesqueeze compress",
+    "decompress": "filesqueeze decompress"
   },
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
     "Huffman",
     "coding",
     "file-compression",
-    "bitpacker"
+    "filesqueeze"
   ],
   "author": "HUMBLEF0OL",
   "license": "ISC",

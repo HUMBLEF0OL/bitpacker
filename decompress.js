@@ -2,6 +2,7 @@ const msgpack5 = require("msgpack5")();
 const path = require('path');
 const fs = require('fs');
 const Node = require("./Node");
+const { formatFileSize } = require("./util");
 
 const bufferToBinaryString = (buffer) => {
     return buffer
@@ -102,7 +103,7 @@ const saveDecodedOutput = async (fileName, data, outputDir) => {
         const fileSize = fs.statSync(decodedFile).size;
 
         console.log(`✅ Decoded file saved at: ${decodedFile}`);
-        console.log(`📏 Decoded file size: ${fileSize} bytes`);
+        console.log(`📏 Decoded file size: ${formatFileSize(fileSize)}`);
 
         return fileSize;
     } catch (err) {

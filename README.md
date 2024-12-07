@@ -1,6 +1,6 @@
 
 
-# Bitpacker - Huffman Compression Tool
+# FileSqueeze - Huffman Compression Tool
 
 This project implements a custom Huffman Compression Algorithm, designed to compress text-based files such as `.txt`, `.json`, `.docx`, and `.pdf`. It uses the Huffman coding technique to reduce the size of the text by encoding characters based on their frequency of occurrence in the source data.
 
@@ -33,12 +33,12 @@ Before running the project, ensure you have the following dependencies installed
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/HUMBLEF0OL/bitpacker.git
+   git clone https://github.com/HUMBLEF0OL/file-squeeze.git
    ```
 
 2. Navigate to the project directory:
    ```bash
-   cd bitpacker
+   cd file-squeeze
    ```
 
 3. Install the required dependencies:
@@ -52,10 +52,10 @@ Before running the project, ensure you have the following dependencies installed
 
 1. **Compress** a file:
 
-   Use the `bitpacker` command with the `compress` option to compress a file.
+   Use the `filesqueeze` command with the `compress` option to compress a file.
 
    ```bash
-   bitpacker compress <inputFile> [--output <outputDir>]
+   filesqueeze compress <inputFile> [--output <outputDir>]
    ```
 
    - `<inputFile>`: The file to be compressed (e.g., `sample.txt`).
@@ -66,7 +66,7 @@ Before running the project, ensure you have the following dependencies installed
    To decompress a previously compressed file, use the `decompress` command.
 
    ```bash
-   bitpacker decompress <inputDir> [--output <outputDir>]
+   filesqueeze decompress <inputDir> [--output <outputDir>]
    ```
 
    - `<inputDir>`: The directory containing the compressed file (`encoded.bin` and `metaData.bin`).

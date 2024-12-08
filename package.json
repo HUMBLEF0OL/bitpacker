@@ -9,7 +9,10 @@
   "scripts": {
     "test": "node testScript.js",
     "compress": "filesqueeze compress",
-    "decompress": "filesqueeze decompress"
+    "decompress": "filesqueeze decompress",
+    "version:patch": "npm version patch --no-git-tag-version && npm publish",
+    "version:minor": "npm version minor --no-git-tag-version && npm publish",
+    "version:major": "npm version major --no-git-tag-version && npm publish"
   },
   "repository": {
     "type": "git",

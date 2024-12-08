@@ -1,6 +1,6 @@
 {
   "name": "filesqueeze",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A file compression tool that uses Huffman coding",
   "main": "index.js",
   "bin": {
